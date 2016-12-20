@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/commons-lang3-3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/JazzyPlugin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/mongo-java-driver-3.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/mongo-java-driver-3.3.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/mongo-java-driver-3.3.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/ark-tweet-nlp-0.3.2/ark-tweet-nlp-0.3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/jython.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
