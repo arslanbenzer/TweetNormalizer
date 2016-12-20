@@ -288,7 +288,7 @@ public class Main {
 				//System.out.println("neighbor "+ne.id+" "+ne.position+" "+ne.tag);
 			}
 		}
-		//graphCandidates(neighbors,taggedTweet[1][pos]);  //find candidates and calculate their contextual similarity score
+		graphCandidates(neighbors,taggedTweet[1][pos]);  //find candidates and calculate their contextual similarity score
 		lexicalCandidates(oov);
 		for(Iterator<HashMap.Entry<String, Double>>it=cndSet.entrySet().iterator(); it.hasNext(); ) {
 		      HashMap.Entry<String, Double> entry = it.next();
@@ -329,7 +329,7 @@ public class Main {
 				maximum=aa;
 			}
 		}
-		if(maximum>0.8)
+		if(maximum>1.5)
 			return suggestion;
 		else return oov;
 	}
