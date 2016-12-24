@@ -73,15 +73,40 @@ public class Main {
 		hs=mmm.getWords(hs2);
 		br2.close();
 		System.out.println(hs.size());
-		//System.out.println(normalize("fucking stalker gettn everything from"));
-		String s1 ="soooo";    //im aim i'm   wat wait what     shawty shitty shorty      jus  j's just   boi bi boy
-		String s2 ="zoo";  //perfered - performed - preferred  confrims - conforms - confirms
-		String s3 ="so";
+		//System.out.println(normalize(",,,, i thnk i had"));
+		String s1 ="showerrrrrr";    //im aim i'm   wat wait what     shawty shitty shorty      jus  j's just   boi bi boy
+		String s2 ="shower";  //perfered - performed - preferred  confrims - conforms - confirms
+		String s3 ="shorter";
 		System.out.println(s2+": "+simCost(s1,s2)+" - "+LAMBDA*Editex.editDistanceScore(s1,s2)+" lscr: "+1.0*getLongestCommonSubsequence(s1, s2)/Math.max(s1.length(), s2.length()));
 		System.out.println(s3+": "+simCost(s1,s3)+" - "+LAMBDA*Editex.editDistanceScore(s1,s3)+" lscr: "+1.0*getLongestCommonSubsequence(s1, s3)/Math.max(s1.length(), s3.length()));
-		//testTrigram();         // tam haliyle bi dene skorlarý not et
-		testLexNorm();		//aynýsý bunun için de
+		//testTrigram(); 
+		testLexNorm();
+        Runtime runtime = Runtime.getRuntime();
+        //Process proc = runtime.exec("rundll32.exe powrprof.dll,SetSuspendState 0,1,0");
+        //System.exit(0);
+		//testWnut();
 	}
+	
+	private static void testWnut () throws IOException, ClassNotFoundException{
+		Locale locale = new Locale("EN", "GB");
+		String line;
+		InputStream fis = new FileInputStream("libraries/wnut/test_2015");
+		InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+		BufferedReader br = new BufferedReader(isr);
+		int cnt =0;
+		while ((line=br.readLine()) != null&&cnt<3){
+			String tweet ="";
+			while(true){
+				line=br.readLine();
+				if(line.trim().isEmpty())
+					break;
+				tweet=tweet.concat(line.toLowerCase(locale)+" ");
+			}
+			cnt++;
+			System.out.println(normalize(tweet));
+		}
+	}
+	
 	private static void testTrigram() throws IOException, ClassNotFoundException{
 		String line;
 		double corNor =0;
@@ -91,14 +116,14 @@ public class Main {
 		double precision =0.0;
 		double recall =0.0;
 		double f_measure= 0.0;
-		int margin=1758;
+		int margin=1500;
 		ArrayList <String> reqqq = new ArrayList<String>();
 		InputStream fis = new FileInputStream("libraries/trigram_data/ann4.trigrams.hyp");   //read tweets
 		InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 		BufferedReader br = new BufferedReader(isr);
 		ArrayList<String> trigram = new ArrayList<String>();
 		while ((line = br.readLine()) != null&&cnt<margin) {
-			System.out.println(line);
+			//System.out.println(line);
 			line=line.replaceAll("<s>", ",,,");
 			line= line.replaceAll("</s>", ",,,");
 			trigram.add(line);
@@ -117,9 +142,9 @@ public class Main {
 		br2.close();
 		
 		for (int i = 0; i < margin; i++) {
+			System.out.println(i);
 			String curTweet = trigram.get(i);
 			String [] tweet = curTweet.split(" ");
-
 			String [] tweet3 = trigram2.get(i).split(" ");
 			ifToNormalize = new boolean [tweet.length];
 			for(int j=0;j<tweet.length;j++){
@@ -143,14 +168,14 @@ public class Main {
 						corNor++;
 					}
 				}
-			}			
+			}	
 		}
 		for (int j= 0;j<words.size();j++) {
 			System.out.println(words.get(j)+" - "+answers.get(j)+" - "+answers2.get(j));
 		}
-		for (int i = 0; i < reqqq.size(); i++) {
+		/*for (int i = 0; i < reqqq.size(); i++) {
 			System.out.println(i+": "+reqqq.get(i));
-		}
+		}*/
 		System.out.println("nor: "+nor);
 		System.out.println("cor nor: "+corNor);
 		System.out.println("req nor: "+reqNor);
@@ -170,7 +195,7 @@ public class Main {
 		double precision =0.0;
 		double recall =0.0;
 		double f_measure= 0.0;
-		InputStream fis = new FileInputStream("libraries/lexnorm_data/corpus.v1.2.tweet");   //read dictionary
+		InputStream fis = new FileInputStream("libraries/lexnorm_data/corpus.v1.2.tweet");
 		InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 		BufferedReader br = new BufferedReader(isr);
 		int cnt =0;
@@ -235,7 +260,7 @@ public class Main {
 		String resultTweet="";
 		for (int i = 0; i < taggedTweet[0].length; i++) {
 			String word=taggedTweet[0][i];
-			if(!hs.contains(word)&&checkChars(word)&&ifToNormalize[i]){//
+			if(!hs.contains(word)&&checkChars(word)){//&&ifToNormalize[i])
 				String suggestion=getSuggestion(word, i);
 				if(suggestion.isEmpty())
 					resultTweet=resultTweet.concat(word+" ");
@@ -252,7 +277,7 @@ public class Main {
 		for (int i=0; i<s.length(); i++) {
 	        char c = s.charAt(i);
 	        //!Character.isDigit(c) && 
-	        if (!Character.isDigit(c)&&!Character.isLetter(c)&&c!='\'' && c!= '-')
+	        if (!Character.isLetter(c)&&c!='\'' && c!= '-')
                 return false;
 		}
 		return true;
@@ -261,9 +286,9 @@ public class Main {
 		double max=Math.max(s1.length(),s2.length());
 		double lcsr=getLongestCommonSubsequence(s1, s2)/max;
 		String str1=s1.replaceAll("[AEIOUaeiou]", "");
-		str1=removeDuplicates(str1);
+		str1=removeDuplicates(s1);
 		String str2=s2.replaceAll("[AEIOUaeiou]", "");
-		str2=removeDuplicates(str2);
+		str2=removeDuplicates(s2);
 		//System.out.print(" str1: "+str1);
 		//System.out.print(" str2: "+str2);
 		double sim=0;
@@ -292,10 +317,12 @@ public class Main {
 		lexicalCandidates(oov);
 		for(Iterator<HashMap.Entry<String, Double>>it=cndSet.entrySet().iterator(); it.hasNext(); ) {
 		      HashMap.Entry<String, Double> entry = it.next();
-			if(editDistance(entry.getKey(), oov)>2&&getDoubleMetaphoneDistance(entry.getKey(), oov)>1) //düzeltildi
+		      double freq=0;
+		      if(nodeFreq.containsKey(entry.getKey()))
+					freq=nodeFreq.get(entry.getKey());
+			if(editDistance(entry.getKey(), oov)>2&&getDoubleMetaphoneDistance(entry.getKey(), oov)>1||freq<20) //düzeltildi
 				it.remove();
 		}
-
 
 		boolean isCont=false;
 		if(noslang.containsKey(oov))
@@ -313,8 +340,8 @@ public class Main {
 				externalScore=1;
 			double lastScore=contSimScore+externalScore+lexSimScore;
 			cndSet.put(s,lastScore);
-			if(lastScore>0.8)
-				System.out.println(s+"- cont: "+contSimScore+" simcost: "+simCost+" editDistScore: "+editDistScore+" ext: "+externalScore);
+			if(lastScore>1.2)
+				System.out.println(s+"- cont: "+contSimScore+" simcost: "+simCost+" editDistScore: "+editDistScore+" ext: "+externalScore+" total: "+lastScore);
 		}
 		/*for(String s : cndSet.keySet()){
 			System.out.println(s+" : "+cndSet.get(s));
@@ -329,7 +356,7 @@ public class Main {
 				maximum=aa;
 			}
 		}
-		if(maximum>1.5)
+		if(maximum>1.2)
 			return suggestion;
 		else return oov;
 	}

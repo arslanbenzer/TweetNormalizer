@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -410,7 +411,8 @@ public class Editex {
             return (( c > a) ? a : c);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException{
     	System.out.println(editexCorrect2("confrims", "confrums"));
+
     }
 }
