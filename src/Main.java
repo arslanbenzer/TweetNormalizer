@@ -1,8 +1,10 @@
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,10 +45,11 @@ public class Main {
 	static HashMap<String,Double> cndSet;
 	static HashMap<String,Integer> nodeFreq= new HashMap<String,Integer>();
 	static String [][]taggedTweet;
-	static boolean [] ifToNormalize;
+	static boolean [] ifToNormalize;//={false,false,false,true,false,false,false};
 	static ArrayList<String> words = new ArrayList<String>();
 	static ArrayList<String> answers = new ArrayList<String>();
 	static ArrayList<String> answers2 = new ArrayList<String>();
+	static BufferedWriter bw;
 	public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
 		Locale locale = new Locale("EN", "GB");
 		String line;
@@ -73,17 +76,18 @@ public class Main {
 		hs=mmm.getWords(hs2);
 		br2.close();
 		System.out.println(hs.size());
-		//System.out.println(normalize(",,,, i thnk i had"));
-		String s1 ="showerrrrrr";    //im aim i'm   wat wait what     shawty shitty shorty      jus  j's just   boi bi boy
-		String s2 ="shower";  //perfered - performed - preferred  confrims - conforms - confirms
-		String s3 ="shorter";
+		
+		//System.out.println(normalize("i wanna this soooo much ! ! if"));
+		String s1 ="soooo";    //im aim i'm   wat wait what     shawty shitty shorty      jus  j's just   boi bi boy
+		String s2 ="soon";  //perfered - performed - preferred  confrims - conforms - confirms
+		String s3 ="so";
 		System.out.println(s2+": "+simCost(s1,s2)+" - "+LAMBDA*Editex.editDistanceScore(s1,s2)+" lscr: "+1.0*getLongestCommonSubsequence(s1, s2)/Math.max(s1.length(), s2.length()));
 		System.out.println(s3+": "+simCost(s1,s3)+" - "+LAMBDA*Editex.editDistanceScore(s1,s3)+" lscr: "+1.0*getLongestCommonSubsequence(s1, s3)/Math.max(s1.length(), s3.length()));
 		//testTrigram(); 
 		testLexNorm();
-        Runtime runtime = Runtime.getRuntime();
-        //Process proc = runtime.exec("rundll32.exe powrprof.dll,SetSuspendState 0,1,0");
-        //System.exit(0);
+        /*Runtime runtime = Runtime.getRuntime();
+        Process proc = runtime.exec("rundll32.exe powrprof.dll,SetSuspendState 0,1,0");
+        System.exit(0);*/
 		//testWnut();
 	}
 	
@@ -195,6 +199,7 @@ public class Main {
 		double precision =0.0;
 		double recall =0.0;
 		double f_measure= 0.0;
+		bw= new BufferedWriter(new FileWriter("libraries/results.txt"));
 		InputStream fis = new FileInputStream("libraries/lexnorm_data/corpus.v1.2.tweet");
 		InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 		BufferedReader br = new BufferedReader(isr);
@@ -252,6 +257,7 @@ public class Main {
 		System.out.println("recall: "+ recall);
 		System.out.println("f-measure: "+2*recall*precision/(recall+precision));
 		System.out.println(hs.size());
+		bw.close();
 
 		
 	}
@@ -260,7 +266,7 @@ public class Main {
 		String resultTweet="";
 		for (int i = 0; i < taggedTweet[0].length; i++) {
 			String word=taggedTweet[0][i];
-			if(!hs.contains(word)&&checkChars(word)){//&&ifToNormalize[i])
+			if(!hs.contains(word)&&checkChars(word)&&ifToNormalize[i]){//
 				String suggestion=getSuggestion(word, i);
 				if(suggestion.isEmpty())
 					resultTweet=resultTweet.concat(word+" ");
@@ -286,9 +292,9 @@ public class Main {
 		double max=Math.max(s1.length(),s2.length());
 		double lcsr=getLongestCommonSubsequence(s1, s2)/max;
 		String str1=s1.replaceAll("[AEIOUaeiou]", "");
-		str1=removeDuplicates(s1);
+		str1=removeDuplicates(str1);
 		String str2=s2.replaceAll("[AEIOUaeiou]", "");
-		str2=removeDuplicates(s2);
+		str2=removeDuplicates(str2);
 		//System.out.print(" str1: "+str1);
 		//System.out.print(" str2: "+str2);
 		double sim=0;
@@ -300,7 +306,7 @@ public class Main {
 		return sim;
 	}
 	
-	private static String getSuggestion(String oov, int pos){
+	private static String getSuggestion(String oov, int pos) throws IOException{
 		cndSet= new HashMap<String,Double>();
 		HashSet<Neighbor> neighbors = new HashSet<Neighbor>();   //creating neighbor list
 		for(int i=0;i<taggedTweet[0].length;i++){
@@ -310,19 +316,19 @@ public class Main {
 				ne.tag=taggedTweet[1][i];
 				ne.position=i-pos;
 				neighbors.add(ne);
-				//System.out.println("neighbor "+ne.id+" "+ne.position+" "+ne.tag);
+				System.out.println("neighbor "+ne.id+" "+ne.position+" "+ne.tag);
 			}
 		}
-		graphCandidates(neighbors,taggedTweet[1][pos]);  //find candidates and calculate their contextual similarity score
+		//graphCandidates(neighbors,taggedTweet[1][pos]);  //find candidates and calculate their contextual similarity score
 		lexicalCandidates(oov);
-		for(Iterator<HashMap.Entry<String, Double>>it=cndSet.entrySet().iterator(); it.hasNext(); ) {
+		/*for(Iterator<HashMap.Entry<String, Double>>it=cndSet.entrySet().iterator(); it.hasNext(); ) {
 		      HashMap.Entry<String, Double> entry = it.next();
 		      double freq=0;
 		      if(nodeFreq.containsKey(entry.getKey()))
 					freq=nodeFreq.get(entry.getKey());
 			if(editDistance(entry.getKey(), oov)>2&&getDoubleMetaphoneDistance(entry.getKey(), oov)>1||freq<20) //düzeltildi
 				it.remove();
-		}
+		}*/
 
 		boolean isCont=false;
 		if(noslang.containsKey(oov))
@@ -338,9 +344,9 @@ public class Main {
 			double contSimScore=cndSet.get(s)+freqScore*BETA;
 			if(isCont&&noslang.get(oov).equals(s))
 				externalScore=1;
-			double lastScore=contSimScore+externalScore+lexSimScore;
+			double lastScore=contSimScore*0+externalScore+lexSimScore;
 			cndSet.put(s,lastScore);
-			if(lastScore>1.2)
+			if(lastScore>1.5)
 				System.out.println(s+"- cont: "+contSimScore+" simcost: "+simCost+" editDistScore: "+editDistScore+" ext: "+externalScore+" total: "+lastScore);
 		}
 		/*for(String s : cndSet.keySet()){
@@ -356,7 +362,9 @@ public class Main {
 				maximum=aa;
 			}
 		}
-		if(maximum>1.2)
+		System.out.println(suggestion+" - "+maximum+"\n");
+		bw.write(suggestion+" - "+oov+" - "+maximum+"\n");
+		if(maximum>0.0)
 			return suggestion;
 		else return oov;
 	}
@@ -406,6 +414,8 @@ public class Main {
 		int mumu=0;
 		for (Document document : candsFrom) {    //calculate edgeWeightScore for nodes that has common edges with neighbors
 			String node=document.getString("to");
+			/*if(node.equals("living"))
+				System.out.println(document+" freq:"+nodeFreq.get("living"));*/
 			Double weight=document.getDouble("weight");
 			if(hs.contains(node)&&nodeFreq.containsKey(node)){
 				int freq= nodeFreq.get(node);
@@ -420,7 +430,10 @@ public class Main {
 		}
 		for (Document document : candsTo) {
 			String node=(String) document.get("from");
+			
 			Double weight=document.getDouble("weight");
+			/*if(node.equals("living"))
+				System.out.println(document+" freq:"+nodeFreq.get("living"));*/
 			if(hs.contains(node)&&nodeFreq.containsKey(node)){
 				int freq= nodeFreq.get(node);
 				if(cndSet.containsKey(node)){

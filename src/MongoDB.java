@@ -2,8 +2,15 @@
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+
+import org.bson.BSONObject;
 import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.python.antlr.PythonParser.return_stmt_return;
+
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
+import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
 
 import static com.mongodb.client.model.Filters.*;
@@ -27,17 +34,19 @@ public class MongoDB {
 	
 	    MongoClient mongoClient = new MongoClient();// "localhost" , 27017 );
 	    db = mongoClient.getDatabase( "twitter_data" );
-	    FindIterable<Document> iterable = db.getCollection("edges").find(new Document("from","february"));//.append("to", "big").append("to_tag", "A").append("dis", 0));
-
+	    Neighbor neigh = new Neighbor();
+	    neigh.id="good";
+	    neigh.position=2;
+	    neigh.tag="A";
+	    getCandidatesFrom2(neigh, "V");
+	   /*FindIterable<Document> iterable = db.getCollection("edges2").find(new Document("from",new ObjectId("52ab7c4cda6776693daa0dde")));//.append("to", "big").append("to_tag", "A").append("dis", 0));
 		iterable.forEach(new Block<Document>() {
 	        @Override	        
 	        public void apply(final Document document) {
 	        	System.out.println(document);
-	        	cnt+=document.getDouble("weight");
 	        }
 	        
-	    });
-		System.out.println(cnt/5600);
+	    });*/
     }
     
 	public HashSet<Document> getCandidatesFrom(Neighbor neighbor,String tag) {   //edges
@@ -77,18 +86,22 @@ public class MongoDB {
 		return cands;
 	}
 	
-	/*public HashSet<Document> getCandidatesFrom(Neighbor neighbor,String tag) {   //edges 2
+	public static HashSet<Document> getCandidatesFrom2(Neighbor neighbor,String tag) {   //edges
 		HashSet<Document> cands = new HashSet<Document>();
 		MongoClient mongoClient = new MongoClient();// "localhost" , 27017 );
 		db = mongoClient.getDatabase( "twitter_data" );
 		System.out.println(neighbor.id);
-		String fromId=getID(neighbor.id,tag);
-		FindIterable<Document> iterable = db.getCollection("edges2").find(new Document("from",fromId).append("from_tag",neighbor.tag)
+		System.out.println(neighbor.id+" - " +neighbor.tag);
+		ObjectId fromId=getNodeId(neighbor.tag,neighbor.id);//.toString();
+		String sss="52ab7c4cda6776693daa0dde";
+		FindIterable<Document> iterable = db.getCollection("edges2").find(new Document("from",new ObjectId(sss))
 				.append("to_tag", tag).append("dis", Math.abs(neighbor.position)-1)); //POS filtering with tag and distance
+		System.out.println("from "+fromId+" to_tag "+ tag+" dis "+(Math.abs(neighbor.position)-1));
 		iterable.forEach(new Block<Document>() {
 	        @Override	        
 	        public void apply(final Document document) {
-	        	cands.add(document);       
+	        	System.out.println(document);
+	        	cands.add(document);
 	        }
 	        
 	    });
@@ -96,7 +109,25 @@ public class MongoDB {
 		return cands;
 	}
 
-	public HashSet<Document> getCandidatesTo(Neighbor neighbor,String tag) {
+	public static Document getNodeByID(String Id){
+	    MongoClient mongoClient = new MongoClient();// "localhost" , 27017 );
+	    db = mongoClient.getDatabase( "twitter_data" );
+	    BasicDBObject query=new BasicDBObject("_id",new ObjectId(Id));
+	    Document myDoc = db.getCollection("nodes").find(query).first();
+	    return myDoc;
+	}
+	
+	public static ObjectId getNodeId(String tag, String node){
+		MongoClient mongoClient = new MongoClient();// "localhost" , 27017 );
+	    db = mongoClient.getDatabase( "twitter_data" );
+	    BasicDBObject query=new BasicDBObject();
+	    query.put("tag",tag);
+	    query.put("node", node);
+	    Document myDoc = db.getCollection("nodes").find(query).first();
+	    System.out.println(myDoc);
+	    return myDoc.getObjectId("_id");
+	}
+	/*public HashSet<Document> getCandidatesTo(Neighbor neighbor,String tag) {
 		HashSet<Document> cands = new HashSet<Document>();
 		MongoClient mongoClient = new MongoClient();// "localhost" , 27017 );
 		db = mongoClient.getDatabase( "twitter_data" );

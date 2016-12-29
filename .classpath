@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/mongo-java-driver-3.3.0-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/ark-tweet-nlp-0.3.2/ark-tweet-nlp-0.3.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/jython.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/json-20160810.jar"/>
+	<classpathentry kind="lib" path="C:/Users/arslanbenzer/workspace/Tweet Normalizer/libraries/gson-2.8.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
